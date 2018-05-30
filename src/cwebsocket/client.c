@@ -183,11 +183,12 @@ int cwebsocket_client_connect(cwebsocket_client *websocket) {
 	snprintf(handshake, 1024,
 		      "GET %s%s HTTP/1.1\r\n"
 		      "Host: %s:%s\r\n"
-		      "Upgrade: WebSocket\r\n"
+		      "Upgrade: websocket\r\n"
 		      "Connection: Upgrade\r\n"
 		      "Sec-WebSocket-Key: %s\r\n"
 		      "Sec-WebSocket-Version: 13\r\n"
-			  ,resource, querystring, hostname, port, seckey);
+          "Cookie: %s\r\n"
+			  ,resource, querystring, hostname, port, seckey, websocket->cookie);
 
 	if(websocket->subprotocol_len > 0) {
 		strcat(handshake, "Sec-WebSocket-Protocol: ");
@@ -412,7 +413,7 @@ int cwebsocket_client_read_handshake(cwebsocket_client *websocket, char *seckey)
 	tmplen = bytes_read - 3;
 	char buf[tmplen+1];
 	memcpy(buf, data, tmplen);
-	buf[tmplen+1] = '\0';
+	buf[tmplen] = '\0';
 
 	return cwebsocket_client_handshake_handler(websocket, buf, seckey);
 }
@@ -926,7 +927,7 @@ ssize_t inline cwebsocket_client_write(cwebsocket_client *websocket, void *buf, 
 #ifdef ENABLE_THREADS
 	ssize_t bytes_written;
 	pthread_mutex_lock(&websocket->write_lock);
-	#ifdef USESSL
+	#ifdef ENABLE_SSL
 		bytes_written = (websocket->flags & WEBSOCKET_FLAG_SSL) ?
 				SSL_write(websocket->ssl, buf, len) :
 				write(websocket->fd, buf, len);

@@ -42,6 +42,7 @@ typedef struct _cwebsocket {
 	int fd;
 	int retry;
 	char *uri;
+  char *cookie;
 	uint8_t flags;
 	uint8_t state;
 #ifdef ENABLE_SSL

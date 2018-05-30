@@ -35,7 +35,7 @@ char* cwebsocket_base64_encode(const unsigned char *input, int length) {
 	BIO_get_mem_ptr(b64, &bptr);
 	char *buff = (char *)malloc(bptr->length);
 	memcpy(buff, bptr->data, bptr->length-1);
-	buff[bptr->length-1] = '\0';
+	buff[bptr->length-1] = 0;
 	BIO_free_all(b64);
 	return buff;
 }
